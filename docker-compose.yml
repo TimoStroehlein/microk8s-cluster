@@ -8,3 +8,4 @@ services:
       - ZONE=timostroehlein.com
       #- SUBDOMAIN=subdomain
       - PROXIED=true
+      - RRTYPE=AAAA
