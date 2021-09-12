@@ -25,3 +25,7 @@ items:
         name: web
         targetPort: "web"
         protocol: "TCP"
+      - port: 443
+        name: websecure
+        targetPort: "websecure"
+        protocol: "TCP"

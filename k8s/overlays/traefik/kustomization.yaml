@@ -2,3 +2,21 @@ bases:
 - ../../base/traefik
 resources:
 - namespace.yaml
+
+#secretGenerator:
+#- name: traefik-dashboard-certs
+#  behavior: add
+#  files:
+#  - k8s.crt
+#  - k8s.key
+#  type: Opaque
+
+#patchesJson6902:
+#- target:
+#    version: v1
+#    kind: IngressRoute
+#    name: traefik-dashboard
+#  patch: |-
+#    - op: add
+#      path: /spec/entryPoints/-
+#      value: traefiksecure
