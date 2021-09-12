@@ -7,22 +7,29 @@ do
     esac
 done
 
+if [ -z "$chart" ] || [ -z "$namespace" ]; then
+    echo "Not all parameters provided."
+    echo "Required: -c chart, -n namespace"
+    exit 1
+fi
+
 mkdir -p charts 
-helm fetch \ 
-    --untar \ 
-    --untardir charts \ 
-    "$chart"
+rm -r charts/"${chart##*/}"
+helm fetch \
+    --untar \
+    --untardir charts \
+    $chart
 
 mkdir -p base
 helm template \
     --output-dir base \
     --namespace "$namespace" \
     --values values.yaml \
-    "${chart##*/}" \
+    ${chart##*/} \
     charts/"${chart##*/}"
 
-for filename in /base/"$name"*.txt; do
-    for ((i=0; i<=3; i++)); do
-        ./MyProgram.exe "$filename" "Logs/$(basename "$filename" .txt)_Log$i.txt"
-    done
+kustomize="apiVersion: kustomize.config.k8s.io/v1beta1\nkind: Kustomization\nnamespace: ${namespace}\nresources:"
+for filename in base/${chart##*/}/templates/${name}*.yaml; do
+    kustomize+="\n- templates/${filename##*/}"
 done
+echo -e $kustomize >> base/${chart##*/}/kustomize.yaml
