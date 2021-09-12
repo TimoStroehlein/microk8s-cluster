@@ -35,7 +35,7 @@ spec:
     spec:
       serviceAccountName: traefik
       terminationGracePeriodSeconds: 60
-      hostNetwork: false
+      hostNetwork: true
       containers:
       - image: "traefik:2.5.1"
         imagePullPolicy: IfNotPresent
@@ -44,7 +44,7 @@ spec:
         readinessProbe:
           httpGet:
             path: /ping
-            port: 9000
+            port: 8000
           failureThreshold: 1
           initialDelaySeconds: 10
           periodSeconds: 10
@@ -53,7 +53,7 @@ spec:
         livenessProbe:
           httpGet:
             path: /ping
-            port: 9000
+            port: 8000
           failureThreshold: 3
           initialDelaySeconds: 10
           periodSeconds: 10
@@ -64,22 +64,24 @@ spec:
           containerPort: 9100
           protocol: "TCP"
         - name: "traefik"
-          containerPort: 9000
+          containerPort: 8000
           protocol: "TCP"
         - name: "web"
-          containerPort: 8080
+          containerPort: 80
           protocol: "TCP"
         - name: "websecure"
-          containerPort: 8443
+          containerPort: 443
           protocol: "TCP"
         securityContext:
           capabilities:
+            add:
+            - NET_BIND_SERVICE
             drop:
             - ALL
           readOnlyRootFilesystem: true
-          runAsGroup: 65532
-          runAsNonRoot: true
-          runAsUser: 65532
+          runAsGroup: 0
+          runAsNonRoot: false
+          runAsUser: 0
         volumeMounts:
           - name: data
             mountPath: /data
@@ -89,9 +91,9 @@ spec:
           - "--global.checknewversion"
           - "--global.sendanonymoususage"
           - "--entryPoints.metrics.address=:9100/tcp"
-          - "--entryPoints.traefik.address=:9000/tcp"
-          - "--entryPoints.web.address=:8080/tcp"
-          - "--entryPoints.websecure.address=:8443/tcp"
+          - "--entryPoints.traefik.address=:8000/tcp"
+          - "--entryPoints.web.address=:80/tcp"
+          - "--entryPoints.websecure.address=:443/tcp"
           - "--api.dashboard=true"
           - "--ping=true"
           - "--metrics.prometheus=true"
@@ -99,6 +101,8 @@ spec:
           - "--providers.kubernetescrd"
           - "--providers.kubernetesingress"
           - "--api.insecure=true"
+          - "--log.level=DEBUG"
+          - "--accesslog=true"
       volumes:
         - name: data
           emptyDir: {}
