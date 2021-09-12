@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.24.0 (4a2a0458)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: cloudflare-ddns
+  name: cloudflare-ddns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: cloudflare-ddns
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.24.0 (4a2a0458)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: cloudflare-ddns
+    spec:
+      containers:
+        - env:
+            - name: API_KEY
+              value: zY51ZTzVVTGitWkwWnft82ndvDXWSlrBdIPTqY9A
+            - name: PROXIED
+              value: "true"
+            - name: RRTYPE
+              value: AAAA
+            - name: ZONE
+              value: timostroehlein.com
+          image: oznu/cloudflare-ddns:latest
+          name: cloudflare-ddns
+          resources: {}
+      restartPolicy: Always
+status: {}

@@ -1,0 +1,28 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kubernetes-dashboard
+resources:
+- templates/clusterrole-metrics.yaml
+- templates/clusterrole-readonly.yaml
+- templates/clusterrolebinding-metrics.yaml
+- templates/clusterrolebinding-readonly.yaml
+- templates/configmap.yaml
+- templates/deployment.yaml
+- templates/ingress.yaml
+- templates/namespace.yaml
+- templates/networkpolicy.yaml
+- templates/pdb.yaml
+- templates/psp.yaml
+- templates/role.yaml
+- templates/rolebinding.yaml
+- templates/secret.yaml
+- templates/service.yaml
+- templates/serviceaccount.yaml
+# https://github.com/kubernetes-sigs/kustomize/blob/master/examples/secretGeneratorPlugin.md
+secretGenerator:
+- name: kubernetes-dashboard-certs
+  behavior: replace
+  files:
+  - k8s.crt
+  - k8s.key
+  type: Opaque

@@ -1,0 +1,5 @@
+extraArgs:
+  - --enable-skip-login
+  - --enable-insecure-login
+  - --tls-cert-file=/k8s.crt
+  - --tls-key-file=/k8s.key
