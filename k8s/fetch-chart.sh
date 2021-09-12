@@ -29,8 +29,14 @@ helm template \
     charts/"${chart##*/}"
 
 kustomization="apiVersion: kustomize.config.k8s.io/v1beta1\nkind: Kustomization\nnamespace: ${namespace}\nresources:"
+# Iterate through /templates directory
 for filename in $(find base/${chart##*/}/templates -name "*.yaml"); do
     mv $filename base/${chart##*/}/
+    kustomization+="\n- ${filename##*/}"
+done
+# Iterate through /crds directory
+for filename in $(find charts/${chart##*/}/crds -name "*.yaml"); do
+    cp $filename base/${chart##*/}/
     kustomization+="\n- ${filename##*/}"
 done
 # Remove all empty directories

@@ -2,4 +2,3 @@ bases:
 - ../../base/traefik
 resources:
 - namespace.yaml
-- custom-resource-definition.yaml

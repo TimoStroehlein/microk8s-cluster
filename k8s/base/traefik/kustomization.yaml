@@ -8,3 +8,12 @@ resources:
 - serviceaccount.yaml
 - clusterrolebinding.yaml
 - clusterrole.yaml
+- middlewares.yaml
+- serverstransports.yaml
+- tlsstores.yaml
+- traefikservices.yaml
+- middlewarestcp.yaml
+- ingressroute.yaml
+- ingressrouteudp.yaml
+- tlsoptions.yaml
+- ingressroutetcp.yaml
