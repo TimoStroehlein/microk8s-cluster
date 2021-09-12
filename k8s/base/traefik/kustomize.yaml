@@ -1,7 +1,0 @@
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-namespace: traefik
-resources:
-- templates/dashboard-hook-ingressroute.yaml
-- templates/deployment.yaml
-- templates/service.yaml

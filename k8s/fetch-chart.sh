@@ -24,12 +24,18 @@ mkdir -p base
 helm template \
     --output-dir base \
     --namespace "$namespace" \
-    --values values.yaml \
+    --values overlays/"${chart##*/}"/values.yaml \
     ${chart##*/} \
     charts/"${chart##*/}"
 
-kustomize="apiVersion: kustomize.config.k8s.io/v1beta1\nkind: Kustomization\nnamespace: ${namespace}\nresources:"
-for filename in base/${chart##*/}/templates/${name}*.yaml; do
-    kustomize+="\n- templates/${filename##*/}"
+kustomization="apiVersion: kustomize.config.k8s.io/v1beta1\nkind: Kustomization\nnamespace: ${namespace}\nresources:"
+for filename in $(find base/${chart##*/}/templates -name "*.yaml"); do
+    mv $filename base/${chart##*/}/
+    kustomization+="\n- ${filename##*/}"
 done
-echo -e $kustomize >> base/${chart##*/}/kustomize.yaml
+# Remove all empty directories
+find base/${chart##*/}/ -type d -empty -delete
+echo -e $kustomization > base/${chart##*/}/kustomization.yaml
+
+mkdir -p overlays
+mkdir -p overlays/${chart##*/}

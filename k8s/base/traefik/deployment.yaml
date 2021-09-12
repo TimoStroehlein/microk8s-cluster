@@ -44,7 +44,7 @@ spec:
         readinessProbe:
           httpGet:
             path: /ping
-            port: 9000
+            port: 8080
           failureThreshold: 1
           initialDelaySeconds: 10
           periodSeconds: 10
@@ -53,7 +53,7 @@ spec:
         livenessProbe:
           httpGet:
             path: /ping
-            port: 9000
+            port: 8080
           failureThreshold: 3
           initialDelaySeconds: 10
           periodSeconds: 10
@@ -64,13 +64,13 @@ spec:
           containerPort: 9100
           protocol: "TCP"
         - name: "traefik"
-          containerPort: 9000
+          containerPort: 8080
           protocol: "TCP"
         - name: "web"
-          containerPort: 8000
+          containerPort: 80
           protocol: "TCP"
         - name: "websecure"
-          containerPort: 8443
+          containerPort: 443
           protocol: "TCP"
         securityContext:
           capabilities:
@@ -89,15 +89,16 @@ spec:
           - "--global.checknewversion"
           - "--global.sendanonymoususage"
           - "--entryPoints.metrics.address=:9100/tcp"
-          - "--entryPoints.traefik.address=:9000/tcp"
-          - "--entryPoints.web.address=:8000/tcp"
-          - "--entryPoints.websecure.address=:8443/tcp"
+          - "--entryPoints.traefik.address=:8080/tcp"
+          - "--entryPoints.web.address=:80/tcp"
+          - "--entryPoints.websecure.address=:443/tcp"
           - "--api.dashboard=true"
           - "--ping=true"
           - "--metrics.prometheus=true"
           - "--metrics.prometheus.entrypoint=metrics"
           - "--providers.kubernetescrd"
           - "--providers.kubernetesingress"
+          - "--api.insecure=true"
       volumes:
         - name: data
           emptyDir: {}

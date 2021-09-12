@@ -57,7 +57,7 @@ spec:
         imagePullPolicy: IfNotPresent
         args:
           - --namespace=kubernetes-dashboard
-          #- --auto-generate-certificates
+          - --auto-generate-certificates
           - --metrics-provider=none
           - --enable-skip-login
           - --enable-insecure-login

@@ -1,0 +1,12 @@
+bases:
+- ../../base/kubernetes-dashboard
+resources:
+- namespace.yaml
+# https://github.com/kubernetes-sigs/kustomize/blob/master/examples/secretGeneratorPlugin.md
+secretGenerator:
+- name: kubernetes-dashboard-certs
+  behavior: replace
+  files:
+  - k8s.crt
+  - k8s.key
+  type: Opaque
