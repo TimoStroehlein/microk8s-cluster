@@ -30,6 +30,11 @@ additionalArguments:
 - --api.insecure=true
 - --log.level=DEBUG
 - --accesslog=true
+#- --entrypoints.traefik.http.redirections.entryPoint.to=traefiksecure
+#- --entrypoints.traefik.http.redirections.entryPoint.scheme=https
+#- --entrypoints.traefik.http.redirections.entrypoint.permanent=true
+#- --entryPoints.traefiksecure.address=:9443/tcp
+- --entryPoints.traefik.http.tls=true
 - --serversTransport.insecureSkipVerify=true
 - --certificatesresolvers.letsencrypt.acme.dnschallenge=true
 - --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare

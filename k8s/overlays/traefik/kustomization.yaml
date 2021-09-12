@@ -2,6 +2,7 @@ bases:
 - ../../base/traefik
 resources:
 - namespace.yaml
+- dashboard-middleware.yaml
 
 #secretGenerator:
 #- name: traefik-dashboard-certs
@@ -13,10 +14,10 @@ resources:
 
 #patchesJson6902:
 #- target:
-#    version: v1
 #    kind: IngressRoute
 #    name: traefik-dashboard
 #  patch: |-
 #    - op: add
-#      path: /spec/entryPoints/-
-#      value: traefiksecure
+#      path: /spec/routes/0/middlewares
+#      value:
+#        - name: redirect-to-https
