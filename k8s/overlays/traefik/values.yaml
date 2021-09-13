@@ -1,7 +1,7 @@
 hostNetwork: true
 ports:
   traefik:
-    port: 9000
+    port: 9443
   web:
     port: 80
     expose: true
@@ -26,18 +26,26 @@ securityContext:
 #    mountPath: "/certs"
 #    type: secret
 
+initContainers:
+- name: volume-permissions
+  image: busybox:1.31.1
+  command: ["sh", "-c", "chmod -Rv 600 /data/*"]
+  volumeMounts:
+    - name: data
+      mountPath: /data
+
+envFrom:
+- secretRef:
+    name: cloudflare-credentials
+
 additionalArguments:
-- --api.insecure=true
+#- --api.insecure=true
 - --log.level=DEBUG
 - --accesslog=true
-#- --entrypoints.traefik.http.redirections.entryPoint.to=traefiksecure
-#- --entrypoints.traefik.http.redirections.entryPoint.scheme=https
-#- --entrypoints.traefik.http.redirections.entrypoint.permanent=true
-#- --entryPoints.traefiksecure.address=:9443/tcp
 - --entryPoints.traefik.http.tls=true
 - --serversTransport.insecureSkipVerify=true
 - --certificatesresolvers.letsencrypt.acme.dnschallenge=true
 - --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare
 - --certificatesresolvers.letsencrypt.acme.email=timostroehlein@gmail.com
-- --certificatesresolvers.letsencrypt.acme.storage=/data/letsencrypt/acme.json
+- --certificatesresolvers.letsencrypt.acme.storage=/data/acme.json
 - --certificatesresolvers.letsencrypt.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory

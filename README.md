@@ -2,4 +2,6 @@
 ```bash
 kubectl apply -k overlays/<name>
 kubectl delete -k overlays/<name>
+
+kubectl kustomize overlays/<name>
 ```

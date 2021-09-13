@@ -12,12 +12,20 @@ resources:
 #  - k8s.key
 #  type: Opaque
 
-#patchesJson6902:
-#- target:
-#    kind: IngressRoute
-#    name: traefik-dashboard
-#  patch: |-
-#    - op: add
-#      path: /spec/routes/0/middlewares
-#      value:
-#        - name: redirect-to-https
+secretGenerator:
+- name: cloudflare-credentials
+  namespace: traefik
+  envs:
+  - cloudflare.env
+  type: Opaque
+
+patchesJson6902:
+- target:
+    kind: IngressRoute
+    name: traefik-dashboard
+  patch: |-
+    - op: add
+      path: /spec/routes/0/middlewares
+      value:
+        - name: digestauth
+        - name: redirect-to-https        

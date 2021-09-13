@@ -3,45 +3,28 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
   name: redirect-to-https
+  namespace: traefik
 spec:
   redirectScheme:
     scheme: https
     permanent: true
 
 ---
-apiVersion: v1
-kind: Secret
-metadata:
-  name: dashboard-authsecret
-data:
-  users: |2
-    dGltbzp0cmFlZmlrOjhmMzgyNjZhOGM0MGEzZjEyY2IzMjY3NTJkOGQyNjk5
-
----
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
   name: digestauth
+  namespace: traefik
 spec:
   digestAuth:
     secret: dashboard-authsecret
 
 ---
-apiVersion: traefik.containo.us/v1alpha1
-kind: IngressRoute
+apiVersion: v1
+kind: Secret
 metadata:
-  name: dashboard-secure
-spec:
-  entryPoints:
-    - traefiksecure
-  routes:
-  - match: Host(`ubuntu-k8s-master.local`) && (PathPrefix(`/dashboard`) || PathPrefix(`/api`))
-    kind: Rule
-    middlewares:
-    - name: digestauth
-    services:
-    - name: api@internal
-      kind: TraefikService
-  tls:
-    domains:
-    - main: ubuntu-k8s-master.local
+  name: dashboard-authsecret
+  namespace: traefik
+data:
+  users: |2
+    dGltbzp0cmFlZmlrOjhmMzgyNjZhOGM0MGEzZjEyY2IzMjY3NTJkOGQyNjk5
