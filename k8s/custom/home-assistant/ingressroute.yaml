@@ -1,0 +1,17 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: home-assistant
+  namespace: default
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`home-assistant.timostroehlein.local`)
+    kind: Rule
+    services:
+    - name: home-assistant
+      kind: Service
+      port: 8123
+  tls:
+    secretName: dashboard-certs
