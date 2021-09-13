@@ -10,6 +10,13 @@ ports:
     port: 443
     expose: true
     exposedPort: 443
+    tls:
+      enabled: true
+      certResolver: letsencrypt
+      domains:
+      - main: timostroehlein.com
+        sans:
+        - "*.timostroehlein.com"
 
 # Allow ports under 1024
 securityContext:
@@ -53,21 +60,10 @@ additionalArguments:
 - --accesslog=true
 - --serversTransport.insecureSkipVerify=true
 - --providers.file.filename=/etc/traefik/dynamic.yaml
-# Setup secure traefik entrypoint
-- --entryPoints.traefiksecure.address=:9443/tcp
-- --entryPoints.traefiksecure.http.tls=true
-- --entrypoints.traefiksecure.http.tls.certResolver=letsencrypt
-- --entrypoints.traefiksecure.http.tls.domains[0].main=timostroehlein.com
-- --entrypoints.traefiksecure.http.tls.domains[0].sans=*.timostroehlein.com
 # Setup an insecure listener that redirects all traffic to TLS
 #- --entrypoints.web.http.redirections.entrypoint.to=websecure
 #- --entrypoints.web.http.redirections.entrypoint.scheme=https
-# Setup the TLS configuration for our websecure listener
-- --entrypoints.websecure.http.tls=true
-- --entrypoints.websecure.http.tls.certResolver=letsencrypt
-- --entrypoints.websecure.http.tls.domains[0].main=timostroehlein.com
-- --entrypoints.websecure.http.tls.domains[0].sans=*.timostroehlein.com
-  # Setup LetsEncrypt
+# Setup LetsEncrypt
 - --certificatesresolvers.letsencrypt.acme.dnschallenge=true
 - --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare
 - --certificatesresolvers.letsencrypt.acme.email=timostroehlein@gmail.com

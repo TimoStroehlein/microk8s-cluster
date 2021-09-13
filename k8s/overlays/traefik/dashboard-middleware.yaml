@@ -48,9 +48,9 @@ metadata:
   namespace: traefik
 spec:
   entryPoints:
-    - traefik
+    - web
   routes:
-  - match: Host(`dashboard.timostroehlein.com`)
+  - match: Host(`dashboard.timostroehlein.local`)
     kind: Rule
     middlewares:
     - name: redirect-to-https
@@ -67,9 +67,9 @@ metadata:
   namespace: traefik
 spec:
   entryPoints:
-    - traefiksecure
+    - websecure
   routes:
-  - match: Host(`dashboard.timostroehlein.com`)
+  - match: Host(`dashboard.timostroehlein.local`)
     kind: Rule
     middlewares:
     - name: dashboard-redirectregex
@@ -81,4 +81,3 @@ spec:
       kind: TraefikService
   tls:
     secretName: dashboard-certs
-    #certResolver: letsencrypt
