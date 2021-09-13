@@ -19,13 +19,13 @@ secretGenerator:
   - cloudflare.env
   type: Opaque
 
-patchesJson6902:
-- target:
-    kind: IngressRoute
-    name: traefik-dashboard
-  patch: |-
-    - op: add
-      path: /spec/routes/0/middlewares
-      value:
-        - name: digestauth
-        - name: redirect-to-https        
+#patchesJson6902:
+#- target:
+#    kind: IngressRoute
+#    name: traefik-dashboard
+#  patch: |-
+#    - op: add
+#      path: /spec/routes/0/middlewares
+#      value:
+#        - name: digestauth
+#        - name: redirect-to-https        

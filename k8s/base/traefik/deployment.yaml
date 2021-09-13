@@ -44,7 +44,7 @@ spec:
         readinessProbe:
           httpGet:
             path: /ping
-            port: 9443
+            port: 9080
           failureThreshold: 1
           initialDelaySeconds: 10
           periodSeconds: 10
@@ -53,7 +53,7 @@ spec:
         livenessProbe:
           httpGet:
             path: /ping
-            port: 9443
+            port: 9080
           failureThreshold: 3
           initialDelaySeconds: 10
           periodSeconds: 10
@@ -64,7 +64,7 @@ spec:
           containerPort: 9100
           protocol: "TCP"
         - name: "traefik"
-          containerPort: 9443
+          containerPort: 9080
           protocol: "TCP"
         - name: "web"
           containerPort: 80
@@ -91,7 +91,7 @@ spec:
           - "--global.checknewversion"
           - "--global.sendanonymoususage"
           - "--entryPoints.metrics.address=:9100/tcp"
-          - "--entryPoints.traefik.address=:9443/tcp"
+          - "--entryPoints.traefik.address=:9080/tcp"
           - "--entryPoints.web.address=:80/tcp"
           - "--entryPoints.websecure.address=:443/tcp"
           - "--api.dashboard=true"
@@ -100,12 +100,14 @@ spec:
           - "--metrics.prometheus.entrypoint=metrics"
           - "--providers.kubernetescrd"
           - "--providers.kubernetesingress"
-          - "--api.insecure=true"
           - "--log.level=DEBUG"
           - "--accesslog=true"
           - "--serversTransport.insecureSkipVerify=true"
-          - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
-          - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+          - "--entryPoints.traefiksecure.address=:9443/tcp"
+          - "--entryPoints.traefiksecure.http.tls=true"
+          - "--entrypoints.traefiksecure.http.tls.certResolver=letsencrypt"
+          - "--entrypoints.traefiksecure.http.tls.domains[0].main=timostroehlein.com"
+          - "--entrypoints.traefiksecure.http.tls.domains[0].sans=*.timostroehlein.com"
           - "--entrypoints.websecure.http.tls=true"
           - "--entrypoints.websecure.http.tls.certResolver=letsencrypt"
           - "--entrypoints.websecure.http.tls.domains[0].main=timostroehlein.com"
@@ -114,7 +116,7 @@ spec:
           - "--certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare"
           - "--certificatesresolvers.letsencrypt.acme.email=timostroehlein@gmail.com"
           - "--certificatesresolvers.letsencrypt.acme.storage=/data/acme.json"
-          - "--certificatesresolvers.letsencrypt.acme.caServer=https://acme-v02.api.letsencrypt.org/directory"
+          - "--certificatesresolvers.letsencrypt.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory"
         envFrom:
           - secretRef:
               name: cloudflare-credentials

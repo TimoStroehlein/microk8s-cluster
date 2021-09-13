@@ -13,6 +13,17 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
+  name: dashboard-redirectregex
+  namespace: traefik
+spec:
+  redirectRegex:
+    regex: ^(https:\/\/(\[[\w:.]+\]|[\w\._-]+)(:\d+)?)\/\w+$
+    replacement: ${1}/
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
   name: digestauth
   namespace: traefik
 spec:
@@ -28,3 +39,45 @@ metadata:
 data:
   users: |2
     dGltbzp0cmFlZmlrOjhmMzgyNjZhOGM0MGEzZjEyY2IzMjY3NTJkOGQyNjk5
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: dashboard
+  namespace: traefik
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`dashboard.timostroehlein.com`)
+    kind: Rule
+    middlewares:
+    - name: redirect-to-https
+      namespace: traefik
+    services:
+    - name: api@internal
+      kind: TraefikService
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: dashboard-secure
+  namespace: traefik
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`dashboard.timostroehlein.com`)
+    kind: Rule
+    middlewares:
+    - name: dashboard-redirectregex
+      namespace: traefik
+    - name: digestauth
+      namespace: traefik
+    services:
+    - name: api@internal
+      kind: TraefikService
+  tls:
+    certResolver: letsencrypt
