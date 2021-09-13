@@ -2,6 +2,8 @@ bases:
 - ../../base/kubernetes-dashboard
 resources:
 - namespace.yaml
+- ingressroute.yaml
+
 # https://github.com/kubernetes-sigs/kustomize/blob/master/examples/secretGeneratorPlugin.md
 secretGenerator:
 - name: kubernetes-dashboard-certs
