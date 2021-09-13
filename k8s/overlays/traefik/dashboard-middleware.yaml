@@ -48,7 +48,7 @@ metadata:
   namespace: traefik
 spec:
   entryPoints:
-    - web
+    - traefik
   routes:
   - match: Host(`dashboard.timostroehlein.com`)
     kind: Rule
@@ -67,7 +67,7 @@ metadata:
   namespace: traefik
 spec:
   entryPoints:
-    - websecure
+    - traefiksecure
   routes:
   - match: Host(`dashboard.timostroehlein.com`)
     kind: Rule
@@ -80,4 +80,5 @@ spec:
     - name: api@internal
       kind: TraefikService
   tls:
-    certResolver: letsencrypt
+    secretName: dashboard-certs
+    #certResolver: letsencrypt

@@ -87,6 +87,12 @@ spec:
             mountPath: /data
           - name: tmp
             mountPath: /tmp
+          - name: dashboard-certs
+            mountPath: /certs
+            readOnly: true
+          - name: static-config
+            mountPath: /etc/traefik
+            readOnly: true
         args:
           - "--global.checknewversion"
           - "--global.sendanonymoususage"
@@ -103,6 +109,7 @@ spec:
           - "--log.level=DEBUG"
           - "--accesslog=true"
           - "--serversTransport.insecureSkipVerify=true"
+          - "--providers.file.filename=/etc/traefik/dynamic.yaml"
           - "--entryPoints.traefiksecure.address=:9443/tcp"
           - "--entryPoints.traefiksecure.http.tls=true"
           - "--entrypoints.traefiksecure.http.tls.certResolver=letsencrypt"
@@ -122,8 +129,15 @@ spec:
               name: cloudflare-credentials
       volumes:
         - name: data
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: traefik
         - name: tmp
           emptyDir: {}
+        - name: dashboard-certs
+          secret:
+            secretName: dashboard-certs
+        - name: static-config
+          configMap:
+            name: static-config
       securityContext:
         fsGroup: 65532

@@ -4,6 +4,7 @@ namespace: traefik
 resources:
 - service.yaml
 - deployment.yaml
+- pvc.yaml
 - dashboard-hook-ingressroute.yaml
 - serviceaccount.yaml
 - clusterrolebinding.yaml

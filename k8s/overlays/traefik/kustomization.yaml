@@ -4,28 +4,21 @@ resources:
 - namespace.yaml
 - dashboard-middleware.yaml
 
-#secretGenerator:
-#- name: traefik-dashboard-certs
-#  behavior: add
-#  files:
-#  - k8s.crt
-#  - k8s.key
-#  type: Opaque
-
 secretGenerator:
 - name: cloudflare-credentials
   namespace: traefik
   envs:
   - cloudflare.env
   type: Opaque
+- name: dashboard-certs
+  namespace: traefik
+  files:
+  - tls.crt
+  - tls.key
+  type: Opaque
 
-#patchesJson6902:
-#- target:
-#    kind: IngressRoute
-#    name: traefik-dashboard
-#  patch: |-
-#    - op: add
-#      path: /spec/routes/0/middlewares
-#      value:
-#        - name: digestauth
-#        - name: redirect-to-https        
+configMapGenerator:
+- name: static-config
+  namespace: traefik
+  files:
+  - dynamic.yaml
