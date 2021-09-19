@@ -13,14 +13,21 @@ if [ -z "$chart" ] || [ -z "$namespace" ]; then
     exit 1
 fi
 
-mkdir -p charts 
+# Empty the existing chart directory
 rm -r charts/"${chart##*/}"
+# Get the current helm chart
 helm fetch \
     --untar \
     --untardir charts \
     $chart
 
-mkdir -p base
+# Empty the existing base directory
+rm -r base/"${chart##*/}"/*
+# Create a values.yaml if ti doesn't exist
+if [ ! -e "$file" ] ; then
+    touch overlays/"${chart##*/}"/values.yaml
+fi
+# Genereate the templates from the helm chart
 helm template \
     --output-dir base \
     --namespace "$namespace" \
@@ -28,20 +35,14 @@ helm template \
     ${chart##*/} \
     charts/"${chart##*/}"
 
+# Kustomization file content
 kustomization="apiVersion: kustomize.config.k8s.io/v1beta1\nkind: Kustomization\nnamespace: ${namespace}\nresources:"
-# Iterate through /templates directory
-for filename in $(find base/${chart##*/}/templates -name "*.yaml"); do
-    mv $filename base/${chart##*/}/
-    kustomization+="\n- ${filename##*/}"
+# Move all files out of the templates directory
+mv base/${chart##*/}/templates/* base/${chart##*/}/
+rm -r base/${chart##*/}/templates
+# Iterate through /base directory
+for filename in $(find base/${chart##*/} -name "*.yaml"); do
+    kustomization+="\n- ${filename#base/${chart##*/}/}"
 done
-# Iterate through /crds directory
-for filename in $(find charts/${chart##*/}/crds -name "*.yaml"); do
-    cp $filename base/${chart##*/}/
-    kustomization+="\n- ${filename##*/}"
-done
-# Remove all empty directories
-find base/${chart##*/}/ -type d -empty -delete
+# Write all file names to the kustomization file
 echo -e $kustomization > base/${chart##*/}/kustomization.yaml
-
-mkdir -p overlays
-mkdir -p overlays/${chart##*/}

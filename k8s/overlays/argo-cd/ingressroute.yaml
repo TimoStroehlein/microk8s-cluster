@@ -1,0 +1,33 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: argo-cd-argocd-server
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`argo-cd.timostroehlein.local`)
+    kind: Rule
+    services:
+    - name: argo-cd-argocd-server
+      namespace: argo-cd
+      port: 443
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: argo-cd-argocd-server-secure
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`argo-cd.timostroehlein.local`)
+    kind: Rule
+    services:
+    - name: argo-cd-argocd-server
+      namespace: argo-cd
+      port: 443
+  tls:
+    secretName: dashboard-certs

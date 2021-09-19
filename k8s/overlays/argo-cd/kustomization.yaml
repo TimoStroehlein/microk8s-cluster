@@ -1,0 +1,5 @@
+bases:
+- ../../base/argo-cd
+resources:
+- namespace.yaml
+- ingressroute.yaml
